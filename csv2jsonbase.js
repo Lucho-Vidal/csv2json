@@ -3,17 +3,30 @@ const fs = require("fs");
 function separarNombreApellido(apellidoNombre) {
     let apellidos = "";
     let nombres = "";
+    let nombresLen = 0;
     let array = apellidoNombre.split(/(?=[A-Z])/).map((e) => e.trim());
 
     nombres += array
         .filter((str) => str.length > 1)
-        .map((nombre) => nombre + " ");
+        .map((nombre) => {
+            nombresLen += 1;
+            return nombre + " ";
+        });
     nombres = nombres.trim();
 
-    array = array.filter((str) => str.length == 1);
+    array = apellidoNombre.split(" ").map((e) => e.trim());
 
-    array.map((e) => (apellidos += e));
-    apellidos = apellidos.charAt(0).toUpperCase() + apellidos.slice(1).toLowerCase();
+    for (let i = 0; i < nombresLen; i++) {//elimino los nombres del array
+        array.pop();
+    }
+    for (let i = 0; i < array.length; i++) {
+        apellidos +=
+            array[i].charAt(0).toUpperCase() +
+            array[i].slice(1).toLowerCase() +
+            " ";
+    }
+    apellidos = apellidos.trim();
+
     return { nombres: nombres, apellidos: apellidos };
 }
 
@@ -44,39 +57,60 @@ for (let i = 0; i < dataLines.length; i++) {
     for (let j = 0; j < 8; j++) {
         if (j == 1) {
             let NombreApellido = separarNombreApellido(data[j]);
-            obj['apellido'] = NombreApellido.apellidos;
-            obj['nombres'] = NombreApellido.nombres;
+            obj["apellido"] = NombreApellido.apellidos;
+            obj["nombres"] = NombreApellido.nombres;
         } else {
             const fieldName = fieldNames[j].toLowerCase();
             const asNumber = Number(data[j]);
             if (asNumber == 0) {
-                obj[fieldName] = '';
+                if (j == 3) {
+                    //franco
+                    obj[fieldName] = 0;
+                } else {
+                    obj[fieldName] = "";
+                }
             } else if (isNaN(asNumber)) {
-                obj[fieldName] = data[j].charAt(0).toUpperCase() + data[j].slice(1).toLowerCase();
+                if (j == 5) {
+                    //Dotacion
+                    obj[fieldName] = data[j].toUpperCase();
+                } else if (j == 2 && data[2].includes("PROG")) {
+                    if (data[4].includes("CONDUCTOR")||data[4].includes("AYUDANTE")) {
+                        obj[fieldName] =
+                            data[2].toUpperCase() + "C" + data[5].toUpperCase();
+                    }else{
+                        obj[fieldName] =
+                            data[2].toUpperCase() + "G" + data[5].toUpperCase();
+                    }
+                    //obj[fieldName] = data[j].toUpperCase();
+                } else {
+                    obj[fieldName] =
+                        data[j].charAt(0).toUpperCase() +
+                        data[j].slice(1).toLowerCase();
+                }
             } else {
                 obj[fieldName] = asNumber;
             }
         }
     }
-    if (data[4].includes("CONDUCTOR")) {
+    if (data[4].includes("CONDUCTOR")||data[4].includes("AYUDANTE")) {
         //carga los conocimientos solo si es conductor o ayudante
         for (let j = 9; j < fieldNames.length; j++) {
             const fieldName = fieldNames[j].toUpperCase();
-            if (data[j] == 'SI' ) {
+            if (data[j] == "SI") {
                 obj2[fieldName] = true;
-            } else{
+            } else {
                 obj2[fieldName] = false;
             }
         }
         obj["conocimientos"] = obj2;
         objCtor.push(obj);
-    }else{
+    } else {
         objGda.push(obj);
     }
 }
 const jsonText = JSON.stringify(objCtor, null, 2);
-fs.writeFileSync('Base-Ctor.json', jsonText);
-console.log('Proceso terminado: ','Base-Ctor.json')
+fs.writeFileSync("Base-Ctor.json", jsonText);
+console.log("Proceso terminado: ", "Base-Ctor.json");
 const jsonText2 = JSON.stringify(objGda, null, 2);
-fs.writeFileSync('Base-Gda.json', jsonText2);
-console.log('Proceso terminado: ','Base-Gda.json')
+fs.writeFileSync("Base-Gda.json", jsonText2);
+console.log("Proceso terminado: ", "Base-Gda.json");
