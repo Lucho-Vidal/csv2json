@@ -1,4 +1,3 @@
-const { log } = require('console');
 const fs = require('fs');
 
 if(process.argv[2]===undefined){
