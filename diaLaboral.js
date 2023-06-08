@@ -28,7 +28,6 @@ function buscarPersonal(turno) {
         console.log(diaLab);
     }
 }
-
 //buscarPersonal("405.5");
 //buscarPersonal("PROG.2CPC");
 //buscarPersonal('405.5')
