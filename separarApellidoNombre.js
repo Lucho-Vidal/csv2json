@@ -28,4 +28,7 @@ function separarNombreApellido(apellidoNombre) {
     return { nombres: nombres, apellidos: apellidos };
 }
 
-console.log(separarNombreApellido("VIDAL LUCHO Luciano Daniel"));
+//console.log(separarNombreApellido("VIDAL LUCHO Luciano Daniel"));
+
+const data = ";5583;PC;18:34;AK;19:23;PD;;;;;;".split(';');
+console.log(data);
