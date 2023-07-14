@@ -12,7 +12,7 @@ const allLines = fileText.split("\r\n");
 const dataLines = allLines.slice();
 //const header = ["TURNO","Itinerario","Personal","Toma","Deja","Vuelta","TREN","REFER","ORIGEN","SALE","DESTINO","LLEGA","OBSERVACIONES"]
 const header =
-    "TURNO,Itinerario,Personal,Toma,Deja,Vuelta,TREN,REFER,ORIGEN,SALE,DESTINO,LLEGA,OBSERVACIONES".toLowerCase();
+    "TURNO,Itinerario,Personal,Toma,Deja,Vuelta,REFER,TREN,ORIGEN,SALE,DESTINO,LLEGA,OBSERVACIONES".toLowerCase();
 const fieldNames = header.split(",");
 
 let objList = [];
@@ -25,7 +25,6 @@ try {
             i++;
         }
         let turno = {};
-        let vueltas = {};
         let lstVueltas = []
         //console.log("DEBUG2",dataLines[i]);
         
@@ -51,24 +50,26 @@ try {
 
                 //salto las cabecera que ya las tengo guardadas en header
                 i = i + 2;
+                let k = 0
                 while (condition){
                     //la fila vacías no son tomas en cuenta 
+                    console.log(k);
                     if (!dataLines[i].includes(",,,,,,,,,,,,")) {
                         data = dataLines[i].split(",");
-                        for (let j = 5; j < fieldNames.length; j++) {
-                            const fieldName = fieldNames[j].toLowerCase();
+                        k++;
+                        let vuelta = {};
+                        vuelta["vuelta"] = k;
+                        for (let j = 0 ; j < 7; j++){
                             const asNumber = Number(data[j]);
                             if (asNumber == 0) {
                                 continue;
                             } else if (isNaN(asNumber)) {
-                                vueltas[fieldName] = data[j];
+                                vuelta[fieldNames[j+6]] = data[j];
                             } else {
-                                vueltas[fieldName] = asNumber;
-                            }
-                            
+                                vuelta[fieldNames[j+6]] = asNumber;
+                            }  
                         }
-                        lstVueltas.push(vueltas)
-                        console.log(vueltas);
+                        lstVueltas.push(vuelta)
                     }
                     //evaluó condición de salida  
                     if (dataLines[i+1] !== undefined) {
