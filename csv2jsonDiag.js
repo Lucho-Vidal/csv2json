@@ -50,15 +50,14 @@ try {
 
                 //salto las cabecera que ya las tengo guardadas en header
                 i = i + 2;
-                let k = 0
+                let numVuelta = 0
                 while (condition){
                     //la fila vacías no son tomas en cuenta 
-                    console.log(k);
                     if (!dataLines[i].includes(",,,,,,,,,,,,")) {
                         data = dataLines[i].split(",");
-                        k++;
                         let vuelta = {};
-                        vuelta["vuelta"] = k;
+                        numVuelta++;
+                        vuelta["vuelta"] = numVuelta;
                         for (let j = 0 ; j < 7; j++){
                             const asNumber = Number(data[j]);
                             if (asNumber == 0) {
