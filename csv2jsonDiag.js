@@ -53,9 +53,10 @@ try {
                 let numVuelta = 0
                 while (condition){
                     //la fila vacías no son tomas en cuenta 
-                    if (!dataLines[i].includes(",,,,,,,,,,,,")) {
+                    let vuelta = {};
+                    if (!dataLines[i].includes(",,,,,,") & (!dataLines[i].includes("D I S P O N I B L E") )) {
                         data = dataLines[i].split(",");
-                        let vuelta = {};
+                        //let vuelta = {};
                         numVuelta++;
                         vuelta["vuelta"] = numVuelta;
                         for (let j = 0 ; j < 7; j++){
@@ -68,6 +69,11 @@ try {
                                 vuelta[fieldNames[j+6]] = asNumber;
                             }  
                         }
+                        lstVueltas.push(vuelta)
+                    } else if (dataLines[i].includes("D I S P O N I B L E")){
+                        numVuelta++;
+                        vuelta["vuelta"] = numVuelta;
+                        vuelta[fieldNames[6]] = "Disponible"
                         lstVueltas.push(vuelta)
                     }
                     //evaluó condición de salida  
