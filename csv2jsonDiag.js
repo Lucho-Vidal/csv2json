@@ -1,5 +1,5 @@
 const fs = require("fs");
-
+console.log(process.argv[2]);
 if (process.argv[2] === undefined) {
     console.error(`Usage: node csv2json.js <file.csv>`);
     process.exit(1);
@@ -35,9 +35,11 @@ try {
                 
                 turno['turno'] = data[1];
                 if(data[1].includes('D')){
-                    turno['itinerario'] = 'D';
+                    turno['itinerario'] = 'D';                    
+                    turno['turno'] = data[1].replace("D","").trim()
                 }else if(data[1].includes("S")){
                     turno['itinerario'] = 'S';
+                    turno['turno'] = data[1].replace("S","").trim()
                 }else{
                     turno['itinerario'] = 'H';
                 }
