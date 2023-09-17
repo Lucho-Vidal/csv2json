@@ -37,6 +37,7 @@ for (let i = 0; i < dataLines.length; i++ ){
             horarios.push(data[j]) 
             tren = {
                 tren:Number(data[0]),
+                itinerario:"H",
                 estaciones,
                 horarios        
             };
