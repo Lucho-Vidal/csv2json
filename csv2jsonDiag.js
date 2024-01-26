@@ -31,9 +31,14 @@ try {
         if (dataLines[i] !== undefined) {
             let condition = true;
             if (dataLines[i].includes("Turno")) {
-                let data = dataLines[i].split(",");
+                let data = dataLines[i].split(";");
                 
                 turno['turno'] = data[1];
+                
+                //Modificar a requerimiento de lo que se esta creando
+                turno['circular'] = "Dic23" 
+                
+
                 if(data[1].includes('D')){
                     turno['itinerario'] = 'D';                    
                     turno['turno'] = data[1].replace("D","").trim()
@@ -44,9 +49,9 @@ try {
                     turno['itinerario'] = 'H';
                 }
                 
-                //voy a la fila de horarios de toma y dejada
+                //voy a la fila de horarios de toma y dejada 
                 i++;
-                data = dataLines[i].split(",");
+                data = dataLines[i].split(";");
                 turno['toma'] = data[2];
                 turno['deja'] = data[4];
 
@@ -57,7 +62,7 @@ try {
                     //la fila vacías no son tomas en cuenta 
                     let vuelta = {};
                     if (!dataLines[i].includes(",,,,,,") & (!dataLines[i].includes("D I S P O N I B L E") )) {
-                        data = dataLines[i].split(",");
+                        data = dataLines[i].split(";");
                         //let vuelta = {};
                         numVuelta++;
                         vuelta["vuelta"] = numVuelta;

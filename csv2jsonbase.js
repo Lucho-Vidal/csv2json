@@ -16,7 +16,8 @@ function separarNombreApellido(apellidoNombre) {
 
     array = apellidoNombre.split(" ").map((e) => e.trim());
 
-    for (let i = 0; i < nombresLen; i++) {//elimino los nombres del array
+    for (let i = 0; i < nombresLen; i++) {
+        //elimino los nombres del array
         array.pop();
     }
     for (let i = 0; i < array.length; i++) {
@@ -39,7 +40,9 @@ const filename = process.argv[2];
 const fileText = fs.readFileSync(filename).toString();
 const allLines = fileText.split("\r\n");
 
-const header = allLines[0];
+//const header = allLines[0];
+const header =
+    "LEGAJO,APELLIDO NOMBRES,TURNO,FRANCO,ESPECIALIDAD,DOTACION,CML,CKD,RO,MPN,OL,LCI,ELEC,DUAL,OBSERVACIONES,ORDEN".toLowerCase();
 const dataLines = allLines.slice(1);
 
 const fieldNames = header.split(",");
@@ -47,14 +50,21 @@ const fieldNames = header.split(",");
 let objCtor = [];
 let objGda = [];
 for (let i = 0; i < dataLines.length; i++) {
-    if (dataLines[i] === "") {
+    if (dataLines[i] == ",,,,,,,,,,,,,,,") {
         continue;
     }
     let obj = {};
     let obj2 = {};
 
     const data = dataLines[i].split(",");
-    for (let j = 0; j < 8; j++) {
+    //si no tiene legajo saltamos al siguiente
+    if(data[0]=="") continue;
+    for (let j = 0; j < 15; j++) {
+        if(j > 5 && j < 14){
+            //conocimiento lo cargo abajo
+            const fieldName = fieldNames[j].toLowerCase();
+            continue;
+        }
         if (j == 1) {
             let NombreApellido = separarNombreApellido(data[j]);
             obj["apellido"] = NombreApellido.apellidos;
@@ -74,14 +84,33 @@ for (let i = 0; i < dataLines.length; i++) {
                     //Dotacion
                     obj[fieldName] = data[j].toUpperCase();
                 } else if (j == 2 && data[2].includes("PROG")) {
-                    if (data[4].includes("CONDUCTOR")||data[4].includes("AYUDANTE")) {
+                    if (
+                        data[4].includes("CONDUCTOR") ||
+                        data[4].includes("AYUDANTE")
+                    ) {
                         obj[fieldName] =
                             data[2].toUpperCase() + "C" + data[5].toUpperCase();
-                    }else{
+                    } else {
                         obj[fieldName] =
                             data[2].toUpperCase() + "G" + data[5].toUpperCase();
                     }
                     //obj[fieldName] = data[j].toUpperCase();
+                } else if (j == 3) {
+                    if (data[3] == "DOMINGO") {
+                        obj[fieldName] = 0;
+                    } else if (data[3] == "LUNES") {
+                        obj[fieldName] = 1;
+                    } else if (data[3] == "MARTES") {
+                        obj[fieldName] = 2;
+                    } else if (data[3] == "MIERCOLES") {
+                        obj[fieldName] = 3;
+                    } else if (data[3] == "JUEVES") {
+                        obj[fieldName] = 4;
+                    } else if (data[3] == "VIERNES") {
+                        obj[fieldName] = 5;
+                    } else if (data[3] == "SABADO") {
+                        obj[fieldName] = 6;
+                    }
                 } else {
                     obj[fieldName] =
                         data[j].charAt(0).toUpperCase() +
@@ -92,9 +121,9 @@ for (let i = 0; i < dataLines.length; i++) {
             }
         }
     }
-    if (data[4].includes("CONDUCTOR")||data[4].includes("AYUDANTE")) {
+    if (data[4].includes("CONDUCTOR") || data[4].includes("AYUDANTE")) {
         //carga los conocimientos solo si es conductor o ayudante
-        for (let j = 9; j < fieldNames.length; j++) {
+        for (let j = 6; j < 14; j++) {
             const fieldName = fieldNames[j].toUpperCase();
             if (data[j] == "SI") {
                 obj2[fieldName] = true;
